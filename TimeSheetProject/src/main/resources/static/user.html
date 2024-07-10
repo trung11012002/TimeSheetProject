@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Information</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap-theme.min.css">
+</head>
+<body>
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    User Information
+                </div>
+                <div class="card-body">
+                    <ul id="userInfoList" class="list-group">
+                        <!-- User information will be dynamically added here -->
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap JS and dependencies (optional for basic functionality) -->
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    $(document).ready(function (){
+        $.ajax({
+            url: '/users/10',
+            type: 'GET',
+            dataType: 'json',
+            success: function(response) {
+                if (response.code === 0) {
+                    var result = response.result;
+                    var userInfoList = $('#userInfoList');
+                    userInfoList.append('<li class="list-group-item"><strong>Username:</strong> ' + result.username + '</li>');
+                    userInfoList.append('<li class="list-group-item"><strong>First Name:</strong> ' + result.firstName + '</li>');
+                    userInfoList.append('<li class="list-group-item"><strong>Last Name:</strong> ' + result.lastName + '</li>');
+                    userInfoList.append('<li class="list-group-item"><strong>Date of Birth:</strong> ' + result.dob + '</li>');
+                } else {
+                    console.error('Error: ' + response.code + ' - ' + response.message);
+                    alert('Error: ' + response.message);
+                }
+            },
+            error: function(xhr, status, error) {
+                //'User not found'
+                if (xhr.status === 404) {
+                    console.error('User not found:', xhr.responseText);
+
+                    var errorResponse = JSON.parse(xhr.responseText);
+                    var code = errorResponse.code;
+                    var message = errorResponse.message;
+
+                    Swal.fire({
+                        // title: 'Error!',
+                        text: message,
+                        icon: 'error',
+                        confirmButtonText: 'Cancel',
+                        width: '25%',
+                        heightAuto: false
+                    }).then((result) => {
+
+                    });
+                } else {
+                    console.error('Error fetching user information:', error);
+                    alert('Error fetching user information');
+                }
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
