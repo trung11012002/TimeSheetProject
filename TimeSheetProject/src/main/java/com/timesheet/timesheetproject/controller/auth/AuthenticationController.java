@@ -1,4 +1,4 @@
-package com.timesheet.timesheetproject.controller;
+package com.timesheet.timesheetproject.controller.auth;
 
 import com.nimbusds.jose.JOSEException;
 import com.timesheet.timesheetproject.dto.request.auth.AuthenticationResquest;

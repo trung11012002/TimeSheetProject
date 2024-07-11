@@ -1,13 +1,15 @@
-package com.timesheet.timesheetproject.service;
+package com.timesheet.timesheetproject.service.impl;
 
 import com.timesheet.timesheetproject.dto.request.user.UserCreationRequest;
 import com.timesheet.timesheetproject.dto.request.user.UserUpdateRequest;
-import com.timesheet.timesheetproject.dto.response.user.UserResponse;
+import com.timesheet.timesheetproject.dto.response.UserResponse;
+import com.timesheet.timesheetproject.entity.Level;
 import com.timesheet.timesheetproject.entity.User;
 import com.timesheet.timesheetproject.exception.AppException;
 import com.timesheet.timesheetproject.exception.ErrorCode;
 import com.timesheet.timesheetproject.mapper.UserMapper;
 import com.timesheet.timesheetproject.repository.UserRepository;
+import com.timesheet.timesheetproject.service.IUserService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -33,6 +35,9 @@ public class UserService implements IUserService {
     public User createUser(UserCreationRequest request) {
         if (userRepository.existsByUsername(request.getUsername()))
             throw new AppException(ErrorCode.USER_EXISTED);
+
+
+
         User user = userMapper.toUser(request);
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
@@ -49,7 +54,7 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public UserResponse getUser(int id) {
+    public UserResponse getUser(long id) {
 
         return userMapper.toUserResponse(userRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED)));
@@ -57,14 +62,14 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public UserResponse updateUser(int userId, UserUpdateRequest request) {
+    public UserResponse updateUser(long userId, UserUpdateRequest request) {
         User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
         userMapper.updateUser(user, request);
         return userMapper.toUserResponse(userRepository.save(user));
     }
 
     @Override
-    public void deleteUser(int userId) {
+    public void deleteUser(long userId) {
         userRepository.deleteById(userId);
     }
 

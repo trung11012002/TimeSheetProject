@@ -1,4 +1,4 @@
-package com.timesheet.timesheetproject.dto.response.role;
+package com.timesheet.timesheetproject.dto.response;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -8,8 +8,8 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class RoleResponse {
-    int id;
-    String code;
+public class PositionResponse extends BaseResponse {
     String name;
+    String description;
+
 }

@@ -15,6 +15,9 @@ import java.util.Set;
 @Entity
 public class Project extends Base{
 
+    String name;
+    String description;
+
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<TimeSheet> timeSheets;
 
@@ -22,6 +25,8 @@ public class Project extends Base{
     private Set<ProjectTask> projectTasks;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(columnDefinition = "position_id" ,referencedColumnName = "id")
-    Position position;
+    @JoinColumn(columnDefinition = "team_id" ,referencedColumnName = "id")
+    Team team;
+
+
 }

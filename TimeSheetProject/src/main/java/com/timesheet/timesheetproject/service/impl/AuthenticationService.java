@@ -1,4 +1,4 @@
-package com.timesheet.timesheetproject.service;
+package com.timesheet.timesheetproject.service.impl;
 
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
@@ -12,11 +12,13 @@ import com.timesheet.timesheetproject.dto.request.auth.RefreshRequest;
 import com.timesheet.timesheetproject.dto.response.auth.AuthenticationResponse;
 import com.timesheet.timesheetproject.dto.response.auth.IntrospectResponse;
 import com.timesheet.timesheetproject.entity.InvalidatedToken;
+import com.timesheet.timesheetproject.entity.Permission;
 import com.timesheet.timesheetproject.entity.User;
 import com.timesheet.timesheetproject.exception.AppException;
 import com.timesheet.timesheetproject.exception.ErrorCode;
 import com.timesheet.timesheetproject.repository.InvalidatedTokenRepository;
 import com.timesheet.timesheetproject.repository.UserRepository;
+import com.timesheet.timesheetproject.service.IAuthenticationService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -63,6 +65,7 @@ public class AuthenticationService implements IAuthenticationService {
         return AuthenticationResponse.builder()
                 .token(token)
                 .authenticated(true)
+                .role(user.getRole().getCode())
                 .build();
     }
 
@@ -152,7 +155,7 @@ public class AuthenticationService implements IAuthenticationService {
                 .expirationTime(new Date(
                         Instant.now().plus(VALID_DURATION, ChronoUnit.SECONDS).toEpochMilli()
                 ))
-                .claim("scope", user.getRole().getName())
+                .claim("scope", converterRoleAndPermission(user))
                 .jwtID(UUID.randomUUID().toString())
                 .build();
         Payload payload = new Payload(jwtClaimsSet.toJSONObject());
@@ -164,5 +167,13 @@ public class AuthenticationService implements IAuthenticationService {
             System.out.println("Cannot create token");
             throw new RuntimeException(e);
         }
+    }
+    private String converterRoleAndPermission(User user){
+        StringBuilder result = new StringBuilder("");
+        result.append("ROLE_" + user.getRole().getCode());
+        for(Permission permisstion : user.getRole().getPermissions()){
+            result.append(" " + permisstion.getCode());
+        }
+        return result.toString();
     }
 }

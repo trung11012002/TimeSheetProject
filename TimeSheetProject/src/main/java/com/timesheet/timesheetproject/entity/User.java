@@ -14,10 +14,7 @@ import java.util.Set;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
-public class User {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    int id;
+public class User extends Base{
     String username;
     String password;
     String surname;
@@ -62,6 +59,9 @@ public class User {
 
     @OneToMany(mappedBy = "user" ,cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.LAZY)
     Set<MyRequest> myRequests;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private Set<TeamUser> teamUsers;
 
 }
 
