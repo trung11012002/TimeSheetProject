@@ -11,8 +11,12 @@ import com.timesheet.timesheetproject.entity.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 
+import java.util.List;
+
 @Mapper(componentModel = "spring")
 public interface RoleMapper {
     Role toRole(RoleCreationRequest roleCreationRequest);
     RoleResponse toRoleResponse(Role role);
+
+    List<RoleResponse> toRoleResponses(List<Role> roles);
 }

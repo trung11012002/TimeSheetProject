@@ -3,12 +3,13 @@ package com.timesheet.timesheetproject.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import lombok.experimental.SuperBuilder;
 
 import java.util.Set;
 
 @Setter
 @Getter
-@Builder
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -22,7 +23,9 @@ public class Level extends Base{
     @OneToMany(mappedBy = "level",cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.LAZY)
     Set<User> users;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(columnDefinition = "type_user_id" , referencedColumnName = "id")
-    TypeUser typeUser;
+    @OneToMany(mappedBy = "beginLevel",cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.LAZY)
+    Set<User> beginUsers;
+
+    @OneToMany(mappedBy = "level",cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.LAZY)
+    Set<TypeUserLevel> typeUserLevels;
 }

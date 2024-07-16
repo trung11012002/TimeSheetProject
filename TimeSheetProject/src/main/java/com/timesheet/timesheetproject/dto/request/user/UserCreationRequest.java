@@ -39,53 +39,43 @@ public class UserCreationRequest {
     @Email(message = "EMAIL_INVALID")
     String email;
 
-    @DobConstraint(min = 16, message = "INVALID_DOB")
-    LocalDate dob;
+//    @DobConstraint(min = 16, message = "INVALID_DOB")
+//    LocalDate dob;
 
     @NotNull(message = "ACTIVE_REQUIRED")
     Boolean active;
 
-    @NotNull(message = "BASIC_TRAINER_REQUIRED")
+    @NotNull(message = "SEX_REQUIRED")
+    String sex;
+
     String basicTrainer;
-
-    @NotNull(message = "START_DATE_REQUIRED")
     LocalDate startDate;
-
-    @NotNull(message = "SALARY_AT_REQUIRED")
     LocalDate salaryAt;
 
-    @NotNull(message = "ALLOW_LEAVE_DAY_REQUIRED")
-    Integer allowLeaveDay;
-
-    @NotNull(message = "SALARY_REQUIRED")
+//    @NotNull(message = "ALLOW_LEAVE_DAY_REQUIRED")
+//    Integer allowLeaveDay;
     Double salary;
-
-    @NotNull(message = "ADDRESS_REQUIRED")
     String address;
-
-    @NotNull(message = "PHONE_REQUIRED")
     String phone;
 
-    @NotNull(message = "BEGIN_LEVEL_REQUIRED")
-    String beginLevel;
+//    @NotNull(message = "BEGIN_LEVEL_REQUIRED")
+//    String beginLevel;
 
-    @NotNull(message = "STOP_WORKING_DATE_REQUIRED")
-    LocalDate stopWorkingDate;
+//    @NotNull(message = "STOP_WORKING_DATE_REQUIRED")
+//    LocalDate stopWorkingDate;
 
     // Foreign key
-    @NotNull(message = "LEVEL_ID_REQUIRED")
-    long levelId;
+    Long levelId;
 
-    @NotNull(message = "TYPE_USER_ID_REQUIRED")
-    long typeUserId;
+    Long typeUserId;
 
-    @NotNull(message = "ROLE_ID_REQUIRED")
-    long roleId;
+//    @NotNull(message = "ROLE_ID_REQUIRED")
+//    Long roleId;
 
     @NotNull(message = "POSITION_ID_REQUIRED")
-    long positionId;
+    Long positionId;
 
     @NotNull(message = "BRANCH_ID_REQUIRED")
-    long branchId;
+    Long branchId;
 
 }

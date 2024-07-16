@@ -9,6 +9,7 @@ import com.timesheet.timesheetproject.dto.response.ApiResponse;
 import com.timesheet.timesheetproject.dto.response.auth.AuthenticationResponse;
 import com.timesheet.timesheetproject.dto.response.auth.IntrospectResponse;
 import com.timesheet.timesheetproject.service.IAuthenticationService;
+import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -30,19 +31,22 @@ public class AuthenticationController {
         var result =  authenticationService.authencticate(resquest);
         return ApiResponse.<AuthenticationResponse>builder()
                 .result(result)
+                .code(1000)
                 .build();
     }
     @PostMapping("/introspect")
-    ApiResponse<IntrospectResponse> authenticate(@RequestBody IntrospectRequest resquest) throws ParseException, JOSEException {
+    ApiResponse<IntrospectResponse> authenticate(@RequestBody @Valid IntrospectRequest resquest) throws ParseException, JOSEException {
         var result =  authenticationService.introspect(resquest);
         return ApiResponse.<IntrospectResponse>builder()
                 .result(result)
+                .code(1000)
                 .build();
     }
     @PostMapping("/logout")
     ApiResponse<Void> logout(@RequestBody LogoutRequest resquest) throws ParseException, JOSEException {
         authenticationService.logout(resquest);
         return ApiResponse.<Void>builder()
+                .code(1000)
                 .build();
     }
 
@@ -51,6 +55,7 @@ public class AuthenticationController {
         var result =  authenticationService.refreshToken(resquest);
         return ApiResponse.<AuthenticationResponse>builder()
                 .result((AuthenticationResponse) result)
+                .code(1000)
                 .build();
     }
 }

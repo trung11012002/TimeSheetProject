@@ -1,5 +1,6 @@
 package com.timesheet.timesheetproject.controller;
 
+import com.timesheet.timesheetproject.dto.request.user.UserResetPasswordRequest;
 import com.timesheet.timesheetproject.dto.response.ApiResponse;
 import com.timesheet.timesheetproject.dto.request.user.UserCreationRequest;
 import com.timesheet.timesheetproject.dto.request.user.UserUpdateRequest;
@@ -28,8 +29,8 @@ public class UserController {
 
     @PreAuthorize("hasAuthority('create-user')")
     @PostMapping
-    ApiResponse<User> createUser(@RequestBody @Valid UserCreationRequest request){
-        ApiResponse<User> apiResponse = new ApiResponse<>();
+    ApiResponse<UserResponse> createUser(@RequestBody @Valid  UserCreationRequest request){
+        ApiResponse<UserResponse> apiResponse = new ApiResponse<>();
         apiResponse.setResult(userService.createUser(request));
         return apiResponse;
     }
@@ -51,7 +52,7 @@ public class UserController {
     ApiResponse<UserResponse> getUser(@PathVariable("userId") Long userId){
         return ApiResponse.<UserResponse>builder()
                 .code(1000)
-                .result(userService.getUser(userId))
+                .result(userService.getUserById(userId))
                 .build();
     }
 
@@ -64,16 +65,44 @@ public class UserController {
     }
 
     @PreAuthorize("hasAuthority('update-user')")
-    @PutMapping("/{userId}")
-    UserResponse updateUser(@PathVariable("userId") Long userId, @RequestBody UserUpdateRequest request){
-        return userService.updateUser(userId , request);
+    @PutMapping("")
+    ApiResponse<UserResponse> updateUser(@RequestBody UserUpdateRequest request){
+        return ApiResponse.<UserResponse>builder()
+                .code(1000)
+                .result(userService.updateUser(request))
+                .build();
     }
 
     @PreAuthorize("hasAuthority('delete-user')")
     @DeleteMapping("/{userId}")
-    String deleteUser(@PathVariable int userId){
+    String deleteUser(@PathVariable Long userId){
         userService.deleteUser(userId);
         return "User has been deleted";
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping("/reset-password")
+    ApiResponse<UserResponse> deleteUser(@RequestBody UserResetPasswordRequest request){
+        return ApiResponse.<UserResponse>builder()
+                .code(1000)
+                .result(userService.resetPassword(request))
+                .build();
+    }
+    @GetMapping("/search")
+    ApiResponse<List<UserResponse>> searchUsers(
+            @RequestParam(value = "username", required = false) String username,
+            @RequestParam(value = "positionId", required = false) Long positionId,
+            @RequestParam(value = "active", required = false) Boolean active,
+            @RequestParam(value = "userTypeId", required = false) Long userTypeId,
+            @RequestParam(value = "branchId", required = false) Long branchId,
+            @RequestParam(value = "levelId", required = false) Long levelId){
+
+        if ("".equals(username)) {
+            username = null;
+        }
+        return ApiResponse.<List<UserResponse>>builder()
+                .code(1000)
+                .result(userService.searchUsers(username,positionId,active,userTypeId,branchId,levelId))
+                .build();
+    }
 }

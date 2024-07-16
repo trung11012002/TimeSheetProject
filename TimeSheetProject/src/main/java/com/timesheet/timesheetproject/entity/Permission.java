@@ -3,10 +3,13 @@ package com.timesheet.timesheetproject.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import lombok.experimental.SuperBuilder;
+
+import java.util.Set;
 
 @Setter
 @Getter
-@Builder
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -17,7 +20,6 @@ public class Permission extends Base{
     @Column(name = "name",nullable = false)
     String name;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(columnDefinition = "role_id", referencedColumnName = "id")
-    Role role;
+    @OneToMany(mappedBy = "permission", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private Set<RolePermission> rolePermissions;
 }

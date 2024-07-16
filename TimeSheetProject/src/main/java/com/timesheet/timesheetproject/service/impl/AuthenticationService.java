@@ -9,21 +9,25 @@ import com.timesheet.timesheetproject.dto.request.auth.AuthenticationResquest;
 import com.timesheet.timesheetproject.dto.request.auth.IntrospectRequest;
 import com.timesheet.timesheetproject.dto.request.auth.LogoutRequest;
 import com.timesheet.timesheetproject.dto.request.auth.RefreshRequest;
+import com.timesheet.timesheetproject.dto.response.PermissionResponse;
+import com.timesheet.timesheetproject.dto.response.RoleResponse;
 import com.timesheet.timesheetproject.dto.response.auth.AuthenticationResponse;
 import com.timesheet.timesheetproject.dto.response.auth.IntrospectResponse;
 import com.timesheet.timesheetproject.entity.InvalidatedToken;
-import com.timesheet.timesheetproject.entity.Permission;
 import com.timesheet.timesheetproject.entity.User;
 import com.timesheet.timesheetproject.exception.AppException;
 import com.timesheet.timesheetproject.exception.ErrorCode;
 import com.timesheet.timesheetproject.repository.InvalidatedTokenRepository;
 import com.timesheet.timesheetproject.repository.UserRepository;
 import com.timesheet.timesheetproject.service.IAuthenticationService;
+import com.timesheet.timesheetproject.service.IPermissionService;
+import com.timesheet.timesheetproject.service.IRoleService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -33,6 +37,7 @@ import java.text.ParseException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -42,6 +47,11 @@ import java.util.UUID;
 public class AuthenticationService implements IAuthenticationService {
     UserRepository userRepository;
     InvalidatedTokenRepository invalidatedTokenRepository;
+    @Autowired
+    IPermissionService permissionService;
+    @Autowired
+    IRoleService roleService;
+
     @NonFinal
     @Value("${jwtSignerKey}")
     protected String SIGNER_KEY;
@@ -60,12 +70,17 @@ public class AuthenticationService implements IAuthenticationService {
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
         boolean authenticated = passwordEncoder.matches(resquest.getPassword(), user.getPassword());
         if (!authenticated) throw new AppException(ErrorCode.UNAUTHENTICATED);
-
+        //role
+        List<RoleResponse> roles = roleService.getRoleByUserId(user.getId());
+        String listRole = "";
+        for(RoleResponse role : roles){
+            listRole += (role.getCode() + " ");
+        }
         var token = generateToken(user);
         return AuthenticationResponse.builder()
                 .token(token)
                 .authenticated(true)
-                .role(user.getRole().getCode())
+                .role(listRole.trim())
                 .build();
     }
 
@@ -170,10 +185,21 @@ public class AuthenticationService implements IAuthenticationService {
     }
     private String converterRoleAndPermission(User user){
         StringBuilder result = new StringBuilder("");
-        result.append("ROLE_" + user.getRole().getCode());
-        for(Permission permisstion : user.getRole().getPermissions()){
-            result.append(" " + permisstion.getCode());
+        //role
+        List<RoleResponse> roles = roleService.getRoleByUserId(user.getId());
+        for(RoleResponse role : roles){
+            result.append("ROLE_");
+            result.append(role.getCode());
+            result.append(" ");
         }
-        return result.toString();
+        //permission
+        for(RoleResponse role: roles){
+            List<PermissionResponse> permissions = permissionService.getPermissionByRoleId(role.getId());
+            for(PermissionResponse permisstion : permissions){
+                result.append(permisstion.getCode());
+                result.append(" ");
+            }
+        }
+        return result.toString().trim();
     }
 }

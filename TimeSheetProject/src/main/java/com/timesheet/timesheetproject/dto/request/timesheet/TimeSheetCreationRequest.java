@@ -16,7 +16,7 @@ public class TimeSheetCreationRequest {
 
     String note;
 
-    double workingTime;
+    Double workingTime;
 
     String type;
 

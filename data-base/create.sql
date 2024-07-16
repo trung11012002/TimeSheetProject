@@ -4,44 +4,74 @@ INSERT INTO type_user (code, name) VALUES ('INTERNSHIP', 'Internship');
 INSERT INTO type_user (code, name) VALUES ('COLLABORATOR', 'Collaborator');
 
 -- level
+-- Insert dữ liệu vào bảng level cho loại user INTERNSHIP
+INSERT INTO level (code, name) 
+VALUES 
+('INTERN_0', 'Intern 0'),
+('INTERN_1', 'Intern 1'),
+('INTERN_2', 'Intern 2'),
+('INTERN_3', 'Intern 3');
 
---level staff
-INSERT INTO level (code, name, type_user_id) VALUES ('FRESHER-', 'Fresher-', (SELECT id FROM type_user WHERE code = 'STAFF'));
-INSERT INTO level (code, name, type_user_id) VALUES ('FRESHER', 'Fresher', (SELECT id FROM type_user WHERE code = 'STAFF'));
-INSERT INTO level (code, name, type_user_id) VALUES ('FRESHER+', 'Fresher+', (SELECT id FROM type_user WHERE code = 'STAFF'));
-INSERT INTO level (code, name, type_user_id) VALUES ('JUNIOR-', 'Junior-', (SELECT id FROM type_user WHERE code = 'STAFF'));
-INSERT INTO level (code, name, type_user_id) VALUES ('JUNIOR', 'Junior', (SELECT id FROM type_user WHERE code = 'STAFF'));
-INSERT INTO level (code, name, type_user_id) VALUES ('JUNIOR+', 'Junior+', (SELECT id FROM type_user WHERE code = 'STAFF'));
-INSERT INTO level (code, name, type_user_id) VALUES ('MIDDLE-', 'Middle-', (SELECT id FROM type_user WHERE code = 'STAFF'));
-INSERT INTO level (code, name, type_user_id) VALUES ('MIDDLE', 'Middle', (SELECT id FROM type_user WHERE code = 'STAFF'));
-INSERT INTO level (code, name, type_user_id) VALUES ('MIDDLE+', 'Middle+', (SELECT id FROM type_user WHERE code = 'STAFF'));
-INSERT INTO level (code, name, type_user_id) VALUES ('SENIOR-', 'Senior-', (SELECT id FROM type_user WHERE code = 'STAFF'));
-INSERT INTO level (code, name, type_user_id) VALUES ('SENIOR', 'Senior', (SELECT id FROM type_user WHERE code = 'STAFF'));
-INSERT INTO level (code, name, type_user_id) VALUES ('SENIOR+', 'Senior+', (SELECT id FROM type_user WHERE code = 'STAFF'));
+-- Insert dữ liệu vào bảng level cho loại user STAFF và COLLABORATOR
+INSERT INTO level (code, name) 
+VALUES 
+('FRESHER-', 'Fresher-'),
+('FRESHER', 'Fresher'),
+('FRESHER+', 'Fresher+'),
+('JUNIOR-', 'Junior-'),
+('JUNIOR', 'Junior'),
+('JUNIOR+', 'Junior+'),
+('MIDDLE-', 'Middle-'),
+('MIDDLE', 'Middle'),
+('MIDDLE+', 'Middle+'),
+('SENIOR-', 'Senior-'),
+('SENIOR', 'Senior'),
+('SENIOR+', 'Senior+');
 
---level Internship
-INSERT INTO level (code, name, type_user_id) VALUES ('INTERN_0', 'Intern 0', (SELECT id FROM type_user WHERE code = 'INTERNSHIP'));
-INSERT INTO level (code, name, type_user_id) VALUES ('INTERN_1', 'Intern 1', (SELECT id FROM type_user WHERE code = 'INTERNSHIP'));
-INSERT INTO level (code, name, type_user_id) VALUES ('INTERN_2', 'Intern 2', (SELECT id FROM type_user WHERE code = 'INTERNSHIP'));
-INSERT INTO level (code, name, type_user_id) VALUES ('INTERN_3', 'Intern 3', (SELECT id FROM type_user WHERE code = 'INTERNSHIP'));
 
---levl Collaborator
-INSERT INTO level (code, name, type_user_id) VALUES ('FRESHER-', 'Fresher-', (SELECT id FROM type_user WHERE code = 'COLLABORATOR'));
-INSERT INTO level (code, name, type_user_id) VALUES ('FRESHER', 'Fresher', (SELECT id FROM type_user WHERE code = 'COLLABORATOR'));
-INSERT INTO level (code, name, type_user_id) VALUES ('FRESHER+', 'Fresher+', (SELECT id FROM type_user WHERE code = 'COLLABORATOR'));
-INSERT INTO level (code, name, type_user_id) VALUES ('JUNIOR-', 'Junior-', (SELECT id FROM type_user WHERE code = 'COLLABORATOR'));
-INSERT INTO level (code, name, type_user_id) VALUES ('JUNIOR', 'Junior', (SELECT id FROM type_user WHERE code = 'COLLABORATOR'));
-INSERT INTO level (code, name, type_user_id) VALUES ('JUNIOR+', 'Junior+', (SELECT id FROM type_user WHERE code = 'COLLABORATOR'));
-INSERT INTO level (code, name, type_user_id) VALUES ('MIDDLE-', 'Middle-', (SELECT id FROM type_user WHERE code = 'COLLABORATOR'));
-INSERT INTO level (code, name, type_user_id) VALUES ('MIDDLE', 'Middle', (SELECT id FROM type_user WHERE code = 'COLLABORATOR'));
-INSERT INTO level (code, name, type_user_id) VALUES ('MIDDLE+', 'Middle+', (SELECT id FROM type_user WHERE code = 'COLLABORATOR'));
-INSERT INTO level (code, name, type_user_id) VALUES ('SENIOR-', 'Senior-', (SELECT id FROM type_user WHERE code = 'COLLABORATOR'));
-INSERT INTO level (code, name, type_user_id) VALUES ('SENIOR', 'Senior', (SELECT id FROM type_user WHERE code = 'COLLABORATOR'));
-INSERT INTO level (code, name, type_user_id) VALUES ('SENIOR+', 'Senior+', (SELECT id FROM type_user WHERE code = 'COLLABORATOR'));
+-- INSERT INTO type_user_level
 
+-- Liên kết Internship với các level intern 0, 1, 2, 3
+INSERT INTO type_user_level (level_id, type_user_id) 
+VALUES 
+((SELECT id FROM level WHERE code = 'INTERN_0'), (SELECT id FROM type_user WHERE code = 'INTERNSHIP')),
+((SELECT id FROM level WHERE code = 'INTERN_1'), (SELECT id FROM type_user WHERE code = 'INTERNSHIP')),
+((SELECT id FROM level WHERE code = 'INTERN_2'), (SELECT id FROM type_user WHERE code = 'INTERNSHIP')),
+((SELECT id FROM level WHERE code = 'INTERN_3'), (SELECT id FROM type_user WHERE code = 'INTERNSHIP'));
+
+-- Liên kết Staff với các level Fresher-, Fresher, Fresher+, Junior-, Junior, Junior+, Middle-, Middle, Middle+, Senior-, Senior, Senior+
+INSERT INTO type_user_level (level_id, type_user_id) 
+VALUES 
+((SELECT id FROM level WHERE code = 'FRESHER-'), (SELECT id FROM type_user WHERE code = 'STAFF')),
+((SELECT id FROM level WHERE code = 'FRESHER'), (SELECT id FROM type_user WHERE code = 'STAFF')),
+((SELECT id FROM level WHERE code = 'FRESHER+') , (SELECT id FROM type_user WHERE code = 'STAFF')),
+((SELECT id FROM level WHERE code = 'JUNIOR-'), (SELECT id FROM type_user WHERE code = 'STAFF')),
+((SELECT id FROM level WHERE code = 'JUNIOR'), (SELECT id FROM type_user WHERE code = 'STAFF')),
+((SELECT id FROM level WHERE code = 'JUNIOR+') , (SELECT id FROM type_user WHERE code = 'STAFF')),
+((SELECT id FROM level WHERE code = 'MIDDLE-' ), (SELECT id FROM type_user WHERE code = 'STAFF')),
+((SELECT id FROM level WHERE code = 'MIDDLE' ), (SELECT id FROM type_user WHERE code = 'STAFF')),
+((SELECT id FROM level WHERE code = 'MIDDLE+' ), (SELECT id FROM type_user WHERE code = 'STAFF')),
+((SELECT id FROM level WHERE code = 'SENIOR-' ), (SELECT id FROM type_user WHERE code = 'STAFF')),
+((SELECT id FROM level WHERE code = 'SENIOR'), (SELECT id FROM type_user WHERE code = 'STAFF')),
+((SELECT id FROM level WHERE code = 'SENIOR+' ), (SELECT id FROM type_user WHERE code = 'STAFF'));
+
+-- Liên kết Collaborator với các level Fresher-, Fresher, Fresher+, Junior-, Junior, Junior+, Middle-, Middle, Middle+, Senior-, Senior, Senior+
+INSERT INTO type_user_level (level_id, type_user_id) 
+VALUES 
+((SELECT id FROM level WHERE code = 'FRESHER-' ), (SELECT id FROM type_user WHERE code = 'COLLABORATOR')),
+((SELECT id FROM level WHERE code = 'FRESHER' ), (SELECT id FROM type_user WHERE code = 'COLLABORATOR')),
+((SELECT id FROM level WHERE code = 'FRESHER+'), (SELECT id FROM type_user WHERE code = 'COLLABORATOR')),
+((SELECT id FROM level WHERE code = 'JUNIOR-' ), (SELECT id FROM type_user WHERE code = 'COLLABORATOR')),
+((SELECT id FROM level WHERE code = 'JUNIOR' ), (SELECT id FROM type_user WHERE code = 'COLLABORATOR')),
+((SELECT id FROM level WHERE code = 'JUNIOR+' ), (SELECT id FROM type_user WHERE code = 'COLLABORATOR')),
+((SELECT id FROM level WHERE code = 'MIDDLE-'), (SELECT id FROM type_user WHERE code = 'COLLABORATOR')),
+((SELECT id FROM level WHERE code = 'MIDDLE' ), (SELECT id FROM type_user WHERE code = 'COLLABORATOR')),
+((SELECT id FROM level WHERE code = 'MIDDLE+' ), (SELECT id FROM type_user WHERE code = 'COLLABORATOR')),
+((SELECT id FROM level WHERE code = 'SENIOR-' ), (SELECT id FROM type_user WHERE code = 'COLLABORATOR')),
+((SELECT id FROM level WHERE code = 'SENIOR' ), (SELECT id FROM type_user WHERE code = 'COLLABORATOR')),
+((SELECT id FROM level WHERE code = 'SENIOR+'), (SELECT id FROM type_user WHERE code = 'COLLABORATOR'));
 -- role
 INSERT INTO role (code, name) VALUES ('STAFF', 'Staff');
-INSERT INTO role (code, name) VALUES ('ADMIN', 'Admin');
 INSERT INTO role (code, name) VALUES ('MANAGER', 'Manager');
 
 -- branch
@@ -65,12 +95,18 @@ INSERT INTO position (name, description) VALUES ('BA', 'Business Analyst');
 INSERT INTO position (name, description) VALUES ('INTERN-NET', 'Intern .NET Developer');
 INSERT INTO position (name, description) VALUES ('INTERN-JAVA', 'Intern Java Developer');
 
--- permission
-INSERT INTO permission (name, code,role_id) VALUES ('create user', 'create-user',(SELECT id FROM role WHERE code = 'ADMIN'));
-INSERT INTO permission (name, code,role_id) VALUES ('get all user', 'get-all-user',(SELECT id FROM role WHERE code = 'ADMIN'));
-INSERT INTO permission (name, code,role_id) VALUES ('get user id', 'get-user-id',(SELECT id FROM role WHERE code = 'ADMIN'));
-INSERT INTO permission (name, code,role_id) VALUES ('my info', 'my-info',(SELECT id FROM role WHERE code = 'ADMIN'));
-INSERT INTO permission (name, code,role_id) VALUES ('update user', 'update-user',(SELECT id FROM role WHERE code = 'ADMIN'));
-INSERT INTO permission (name, code,role_id) VALUES ('delete', 'delete-user',(SELECT id FROM role WHERE code = 'ADMIN'));
+-- -- permission
+INSERT INTO permission (name, code) VALUES ('create user', 'create-user');
+INSERT INTO permission (name, code) VALUES ('get user all', 'get-user-all');
+INSERT INTO permission (name, code) VALUES ('get user id', 'get-user-id');
+INSERT INTO permission (name, code) VALUES ('my info', 'my-info');
+INSERT INTO permission (name, code) VALUES ('update user', 'update-user');
+INSERT INTO permission (name, code) VALUES ('delete', 'delete-user');
 
+INSERT INTO role_permission (role_id,permission_id) VALUES ((SELECT id FROM role WHERE code = 'ADMIN'), (SELECT id FROM permission WHERE code = 'create-user'));
+INSERT INTO role_permission (role_id,permission_id) VALUES ((SELECT id FROM role WHERE code = 'ADMIN'), (SELECT id FROM permission WHERE code = 'get-user-all'));
+INSERT INTO role_permission (role_id,permission_id) VALUES ((SELECT id FROM role WHERE code = 'ADMIN'), (SELECT id FROM permission WHERE code = 'get-user-id'));
+INSERT INTO role_permission (role_id,permission_id) VALUES ((SELECT id FROM role WHERE code = 'ADMIN'), (SELECT id FROM permission WHERE code = 'my-info'));
+INSERT INTO role_permission (role_id,permission_id) VALUES ((SELECT id FROM role WHERE code = 'ADMIN'), (SELECT id FROM permission WHERE code = 'update-user'));
+INSERT INTO role_permission (role_id,permission_id) VALUES ((SELECT id FROM role WHERE code = 'ADMIN'), (SELECT id FROM permission WHERE code = 'delete-user'));
 

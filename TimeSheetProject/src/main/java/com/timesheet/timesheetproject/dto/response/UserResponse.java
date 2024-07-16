@@ -1,15 +1,21 @@
 package com.timesheet.timesheetproject.dto.response;
 
 import com.timesheet.timesheetproject.entity.*;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@SuperBuilder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserResponse extends BaseResponse{
     String username;
@@ -20,22 +26,21 @@ public class UserResponse extends BaseResponse{
     LocalDate dob;
     Boolean active;
     String basicTranner;
-
+    String sex;
     LocalDate startDate;
     LocalDate salaryAt;
     int allowLeaveDay;
     double salary;
     String address;
     String phone;
-    String beginLevel;
     LocalDate stopWorkingDate;
 
-
+    Level beginLevel;
     LevelResponse level;
 
     TypeUserResponse typeUser;
 
-    RoleResponse role;
+    List<RoleResponse> roles;
 
     PositionResponse position;
 

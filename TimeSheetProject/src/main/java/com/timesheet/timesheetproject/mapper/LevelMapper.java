@@ -9,9 +9,16 @@ import com.timesheet.timesheetproject.entity.Level;
 import com.timesheet.timesheetproject.entity.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
+import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface LevelMapper {
     Level toLevel(LevelCreationRequest levelCreationRequest);
     LevelResponse toLevelResponse(Level level);
+
+    List<Level> toLevels(List<LevelCreationRequest> levelCreationRequests);
+    List<LevelResponse> toLevelResponses(List<Level> levels);
 }
