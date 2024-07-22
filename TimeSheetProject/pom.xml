@@ -54,6 +54,12 @@
             <artifactId>spring-boot-starter-mail</artifactId>
         </dependency>
 
+        <!--schedule-->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+        </dependency>
+
         <!-- Development Tools -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
