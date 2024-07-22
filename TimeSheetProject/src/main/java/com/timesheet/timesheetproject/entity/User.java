@@ -33,6 +33,7 @@ public class User extends Base{
     String address;
     String phone;
     LocalDate stopWorkingDate;
+    String avatarUrl;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "begin_level_id" ,referencedColumnName = "id")

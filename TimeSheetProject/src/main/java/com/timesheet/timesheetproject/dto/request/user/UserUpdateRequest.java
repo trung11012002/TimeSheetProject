@@ -59,7 +59,6 @@ public class UserUpdateRequest {
     Long levelId;
 
     Long typeUserId;
-
 //    @NotNull(message = "ROLE_ID_REQUIRED")
 //    Long roleId;
 

@@ -1,16 +1,12 @@
 package com.timesheet.timesheetproject.dto.response;
 
 import com.timesheet.timesheetproject.entity.*;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -34,6 +30,7 @@ public class UserResponse extends BaseResponse{
     String address;
     String phone;
     LocalDate stopWorkingDate;
+    String avatarUrl;
 
     Level beginLevel;
     LevelResponse level;

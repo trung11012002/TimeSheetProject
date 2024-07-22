@@ -1,11 +1,5 @@
 package com.timesheet.timesheetproject.dto.response;
 
-import com.timesheet.timesheetproject.entity.StatusMyRequest;
-import com.timesheet.timesheetproject.entity.User;
-import jakarta.persistence.Column;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
@@ -18,11 +12,16 @@ import java.time.LocalDate;
 @SuperBuilder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class MyRequestResponse extends BaseResponse{
-
     LocalDate date;
-    double lateHour;
-
+    String type;
+    Double hour;
+    String status;
     UserResponse user;
 
-    StatusMyRequestResponse statusMyRequest;
+    public MyRequestResponse(LocalDate date, String type, Double hour, String status) {
+        this.date = date;
+        this.type = type;
+        this.hour = hour;
+        this.status = status;
+    }
 }

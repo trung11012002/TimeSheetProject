@@ -18,6 +18,7 @@ public class Project extends Base{
 
     String name;
     String description;
+    Boolean active;
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<TimeSheet> timeSheets;

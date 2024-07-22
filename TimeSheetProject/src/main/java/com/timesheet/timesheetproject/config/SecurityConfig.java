@@ -3,6 +3,7 @@ package com.timesheet.timesheetproject.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -27,6 +28,7 @@ public class SecurityConfig {
     CustomJwtDecoder customJwtDecoder;
 
     @Bean
+    @Order(1)
     public SecurityFilterChain publicEndpointsFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
                 .securityMatcher(PUBLIC_ENDPOINTS)
@@ -38,6 +40,7 @@ public class SecurityConfig {
     }
 
     @Bean
+    @Order(2)
     public SecurityFilterChain securedEndpointsFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)

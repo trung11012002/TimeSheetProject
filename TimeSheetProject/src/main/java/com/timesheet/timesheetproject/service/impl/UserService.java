@@ -15,6 +15,9 @@ import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -86,7 +89,6 @@ public class UserService implements IUserService {
         user = userRepository.save(user);
         UserRole userRole = new UserRole(user,role);
         userRoleRepostitory.save(userRole);
-
         return userMapper.toUserResponse(userRepository.save(user));
     }
 
@@ -158,7 +160,21 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public List<UserResponse> searchUsers(String username,Long positionId, Boolean active, Long userTypeId, Long branchId, Long levelId) {
-        return userMapper.toUserResponses(userRepository.searchUsers(username,positionId,active,userTypeId,branchId,levelId));
+    public List<UserResponse> getUserByRoleId(Long roleId) {
+        return userMapper.toUserResponses(userRepository.findUserByRoleId(roleId));
+    }
+
+    @Override
+    public Page<UserResponse> searchUsers(String username,Long positionId, Boolean active, Long userTypeId, Long branchId, Long levelId,Integer pageNo) {
+        Pageable pageable = PageRequest.of(pageNo-1,4);
+        Page<User> usersPage = userRepository.searchUsers(username,positionId,active,userTypeId,branchId,levelId,pageable);
+        return usersPage.map(userMapper::toUserResponse);
+    }
+
+    @Override
+    public Page<UserResponse> getPage(Integer pageNo) {
+        Pageable pageable = PageRequest.of(pageNo-1,2);
+        Page<User> usersPage = userRepository.findAll(pageable);
+        return usersPage.map(userMapper::toUserResponse);
     }
 }

@@ -7,6 +7,8 @@ import com.timesheet.timesheetproject.dto.response.UserResponse;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.time.LocalDate;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -18,11 +20,11 @@ public class TimeSheetCreationRequest {
 
     Double workingTime;
 
-    String type;
+    Boolean type;
 
+    Long taskId;
 
-    UserCreationRequest user;
+    Long projectId;
+    LocalDate date;
 
-
-    ProjectResponse project;
 }

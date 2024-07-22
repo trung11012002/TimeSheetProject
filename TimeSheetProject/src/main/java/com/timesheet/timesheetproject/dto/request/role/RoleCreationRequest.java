@@ -12,4 +12,5 @@ import lombok.experimental.FieldDefaults;
 public class RoleCreationRequest{
     String code;
     String name;
+    Long permissionIds [];
 }

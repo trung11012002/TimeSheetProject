@@ -1,10 +1,8 @@
-package com.timesheet.timesheetproject.controller;
+package com.timesheet.timesheetproject.controller.personal;
 
 import com.timesheet.timesheetproject.dto.response.ApiResponse;
 import com.timesheet.timesheetproject.dto.response.LevelResponse;
-import com.timesheet.timesheetproject.dto.response.RoleResponse;
 import com.timesheet.timesheetproject.service.ILevelService;
-import com.timesheet.timesheetproject.service.IRoleService;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,24 +14,24 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/role")
+@RequestMapping("/level")
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class RoleController {
+public class LevelController {
     @Autowired
-    IRoleService roleService;
+    ILevelService levelService;
+
     @GetMapping("")
-    ApiResponse<List<RoleResponse>> getAll() {
-        return ApiResponse.<List<RoleResponse>>builder()
+    ApiResponse<List<LevelResponse>> getAll() {
+        return ApiResponse.<List<LevelResponse>>builder()
                 .code(1000)
-                .result(roleService.getAllRole())
+                .result(levelService.getAllLevel())
                 .build();
     }
-
-    @GetMapping("/user-id/{userId}")
-    ApiResponse<List<RoleResponse>> getRoleByUserId(@PathVariable("userId")Long userId) {
-        return ApiResponse.<List<RoleResponse>>builder()
+    @GetMapping("/type-user-id/{typeUserId}")
+    ApiResponse<List<LevelResponse>> getByTypeUserId(@PathVariable Long typeUserId){
+        return ApiResponse.<List<LevelResponse>>builder()
                 .code(1000)
-                .result(roleService.getRoleByUserId(userId))
+                .result(levelService.getByTypeUserId(typeUserId))
                 .build();
     }
 }

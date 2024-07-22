@@ -1,4 +1,4 @@
-package com.timesheet.timesheetproject.controller;
+package com.timesheet.timesheetproject.controller.admin;
 
 import com.timesheet.timesheetproject.dto.response.ApiResponse;
 import com.timesheet.timesheetproject.dto.response.RoleResponse;

@@ -84,7 +84,7 @@ INSERT INTO branch (name, code) VALUES ('Đà Nẵng', 'DN');
 INSERT INTO branch (name, code) VALUES ('Vinh', 'VINH');
 INSERT INTO branch (name, code) VALUES ('Quy nhơn', 'QN');
 
---position
+-- position
 INSERT INTO position (name, description) VALUES ('DEV', 'Developer');
 INSERT INTO position (name, description) VALUES ('TESTER', 'Tester');
 INSERT INTO position (name, description) VALUES ('IT', 'IT Specialist');
@@ -109,4 +109,58 @@ INSERT INTO role_permission (role_id,permission_id) VALUES ((SELECT id FROM role
 INSERT INTO role_permission (role_id,permission_id) VALUES ((SELECT id FROM role WHERE code = 'ADMIN'), (SELECT id FROM permission WHERE code = 'my-info'));
 INSERT INTO role_permission (role_id,permission_id) VALUES ((SELECT id FROM role WHERE code = 'ADMIN'), (SELECT id FROM permission WHERE code = 'update-user'));
 INSERT INTO role_permission (role_id,permission_id) VALUES ((SELECT id FROM role WHERE code = 'ADMIN'), (SELECT id FROM permission WHERE code = 'delete-user'));
+
+
+-- Team
+INSERT INTO team (name,description) VALUES ("team1" ,"team lam ve san pham 1");
+INSERT INTO team (name,description) VALUES ("team2" ,"team lam ve san pham 2");
+INSERT INTO team (name,description) VALUES ("team3" ,"team lam ve san pham 3");
+
+-- project
+INSERT INTO project (name , description, active , team_id) VALUES ("project1","thong tin project 1" , true , 1);
+INSERT INTO project (name , description, active , team_id) VALUES ("project2","thong tin project 2" , true , 2);
+INSERT INTO project (name , description, active , team_id) VALUES ("project3","thong tin project 3" , true , 3); 
+
+-- task
+INSERT INTO task (code,name,description) VALUES ("CODING", "coding" , "");
+INSERT INTO task (code,name,description) VALUES ("TESTING" , "testing", "");
+INSERT INTO task (code,name,description) VALUES ("PROJECT-MANAGEMENT" ,"prject management","");
+INSERT INTO task (code,name,description) VALUES ("MEETING","meeting","");
+INSERT INTO task (code,name,description) VALUES ("DOCUMENTING","documenting","");
+INSERT INTO task (code,name,description) VALUES ("REVIEW-CODE","review code","");
+
+-- project-task
+INSERT INTO project_task(task_id,project_id) VALUES (1,1);
+INSERT INTO project_task(task_id,project_id) VALUES (2,1);
+INSERT INTO project_task(task_id,project_id) VALUES (3,1);
+INSERT INTO project_task(task_id,project_id) VALUES (4,1);
+INSERT INTO project_task(task_id,project_id) VALUES (5,1);
+INSERT INTO project_task(task_id,project_id) VALUES (6,1);
+
+INSERT INTO project_task(task_id,project_id) VALUES (1,2);
+INSERT INTO project_task(task_id,project_id) VALUES (2,2);
+INSERT INTO project_task(task_id,project_id) VALUES (3,2);
+INSERT INTO project_task(task_id,project_id) VALUES (4,2);
+
+
+INSERT INTO project_task(task_id,project_id) VALUES (1,3);
+INSERT INTO project_task(task_id,project_id) VALUES (2,3);
+INSERT INTO project_task(task_id,project_id) VALUES (3,3);
+INSERT INTO project_task(task_id,project_id) VALUES (4,3);
+
+-- team-user
+INSERT INTO team_user(team_id,user_id) VALUES (1,1);
+INSERT INTO team_user(team_id,user_id) VALUES (1,2);
+INSERT INTO team_user(team_id,user_id) VALUES (1,3);
+
+INSERT INTO team_user(team_id,user_id) VALUES (2,4);
+INSERT INTO team_user(team_id,user_id) VALUES (2,5);
+INSERT INTO team_user(team_id,user_id) VALUES (2,6);
+
+-- status my request
+INSERT INTO status_my_request(name,description) VALUES("Full day" , "nghi ca ngay");
+INSERT INTO status_my_request(name,description) VALUES("Morning" , "nghi buoi sang");
+INSERT INTO status_my_request(name,description) VALUES("Afternoon" , "nghi buoi chieu");
+INSERT INTO status_my_request(name,description) VALUES("Late hour" , "di muon");
+INSERT INTO status_my_request(name,description) VALUES("Early hour" , "ve som");
 

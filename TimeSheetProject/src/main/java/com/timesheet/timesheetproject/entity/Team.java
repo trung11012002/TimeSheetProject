@@ -19,7 +19,7 @@ import java.util.Set;
 @Entity
 public class Team extends Base{
     String name;
-    String desciption;
+    String description;
     @OneToMany(mappedBy = "team", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<TeamUser> teamUsers;
     @OneToMany(mappedBy = "team", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)

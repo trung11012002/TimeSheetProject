@@ -1,10 +1,10 @@
-package com.timesheet.timesheetproject.controller;
+package com.timesheet.timesheetproject.controller.admin;
 
 import com.timesheet.timesheetproject.dto.response.ApiResponse;
 import com.timesheet.timesheetproject.dto.response.BranchResponse;
-import com.timesheet.timesheetproject.dto.response.LevelResponse;
+import com.timesheet.timesheetproject.dto.response.TaskResponse;
 import com.timesheet.timesheetproject.service.IBranchService;
-import com.timesheet.timesheetproject.service.ILevelService;
+import com.timesheet.timesheetproject.service.ITaskService;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,17 +16,17 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/branch")
+@RequestMapping("/task")
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class BranchController {
+public class TaskController {
     @Autowired
-    IBranchService branchService;
+    ITaskService taskService;
 
-    @GetMapping("")
-    ApiResponse<List<BranchResponse>> getAll() {
-        return ApiResponse.<List<BranchResponse>>builder()
+    @GetMapping("/project-id/{projectId}")
+    ApiResponse<List<TaskResponse>> getTaskByProjectId(@PathVariable Long projectId) {
+        return ApiResponse.<List<TaskResponse>>builder()
                 .code(1000)
-                .result(branchService.getAllBranch())
+                .result(taskService.getTaskByProjectId(projectId))
                 .build();
     }
 }

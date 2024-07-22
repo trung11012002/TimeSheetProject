@@ -15,7 +15,6 @@ import java.util.Set;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
 public class UserRole extends Base{
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(columnDefinition = "user_id" ,referencedColumnName = "id")
     User user;

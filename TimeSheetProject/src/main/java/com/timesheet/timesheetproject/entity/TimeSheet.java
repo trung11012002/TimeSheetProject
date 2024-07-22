@@ -5,6 +5,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
 
+import java.time.LocalDate;
 import java.util.Set;
 
 @Setter
@@ -20,7 +21,12 @@ public class TimeSheet extends Base{
     @Column(name = "workingTime" ,nullable = false)
     double workingTime;
     @Column(name = "type", nullable = false)
-    String type;
+    Boolean type;
+    @Column(name = "status", nullable = false)
+    String status;
+
+    @Column(name = "date", nullable = false)
+    LocalDate date;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id",referencedColumnName = "id")
@@ -29,4 +35,9 @@ public class TimeSheet extends Base{
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "project_id",referencedColumnName = "id")
     private Project project;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "task_id",referencedColumnName = "id")
+    private Task task;
+
 }

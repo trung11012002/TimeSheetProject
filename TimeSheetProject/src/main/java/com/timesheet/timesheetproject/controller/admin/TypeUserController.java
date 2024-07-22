@@ -1,8 +1,8 @@
-package com.timesheet.timesheetproject.controller;
+package com.timesheet.timesheetproject.controller.admin;
 
 import com.timesheet.timesheetproject.dto.response.ApiResponse;
-import com.timesheet.timesheetproject.dto.response.PositionResponse;
-import com.timesheet.timesheetproject.service.IPositionService;
+import com.timesheet.timesheetproject.dto.response.TypeUserResponse;
+import com.timesheet.timesheetproject.service.ITypeUserService;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,17 +13,16 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/position")
+@RequestMapping("/type-user")
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class PositionController {
+public class TypeUserController {
     @Autowired
-    IPositionService positionService;
-
+    ITypeUserService typeUserService;
     @GetMapping()
-    ApiResponse<List<PositionResponse>> getAllPosition(){
-        return ApiResponse.<List<PositionResponse>>builder()
+    ApiResponse<List<TypeUserResponse>> getAllTypeUser(){
+        return ApiResponse.<List<TypeUserResponse>>builder()
                 .code(1000)
-                .result(positionService.getAllPosition())
+                .result(typeUserService.getAllTypeUser())
                 .build();
     }
 }

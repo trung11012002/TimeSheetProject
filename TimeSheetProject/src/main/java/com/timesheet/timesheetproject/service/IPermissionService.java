@@ -8,4 +8,5 @@ import java.util.List;
 public interface IPermissionService {
     List<PermissionResponse> getAllPermission();
     List<PermissionResponse> getPermissionByRoleId(Long roleId);
+
 }

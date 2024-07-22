@@ -15,18 +15,20 @@ import java.util.Set;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
-public class MyRequest extends Base{
-    @Column(name = "date",nullable = false)
+public class MyRequest extends Base {
+    @Column(name = "date", nullable = false)
     LocalDate date;
-    @Column(name = "late_hour" ,nullable = true)
-    double lateHour;
+
+    @Column(name = "hour")
+    Double hour;
+
+    @Column(name = "type")
+    String type;
+
+    @Column(name = "status")
+    String status;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(columnDefinition = "user_id" , referencedColumnName = "id")
+    @JoinColumn(columnDefinition = "user_id", referencedColumnName = "id")
     User user;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(columnDefinition = "status_my_request_id" , referencedColumnName = "id")
-    StatusMyRequest statusMyRequest;
-
 }
