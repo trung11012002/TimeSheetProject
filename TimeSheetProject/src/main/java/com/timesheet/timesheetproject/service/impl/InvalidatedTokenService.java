@@ -14,9 +14,12 @@ import org.springframework.stereotype.Service;
 public class InvalidatedTokenService {
     @Autowired
     InvalidatedTokenRepository invalidatedTokenRepository;
+
 //    @Scheduled(cron = "0 0 12 ? * MON")
-    @Scheduled(cron = "0 * * * * *")
-    public void deleteEveryMonday(){
-        log.info("hello");
-    }
+
+//    @Scheduled(cron = "0 * * * * *")
+//    public void deleteEveryMonday(){
+//        log.info("hello");
+//    }
+
 }

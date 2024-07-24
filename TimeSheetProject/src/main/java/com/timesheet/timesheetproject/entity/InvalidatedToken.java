@@ -1,5 +1,6 @@
 package com.timesheet.timesheetproject.entity;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 import jakarta.persistence.Entity;
@@ -20,4 +21,5 @@ public class InvalidatedToken {
     @Id
     String id;
     Date expiryTime;
+    LocalDate date;
 }

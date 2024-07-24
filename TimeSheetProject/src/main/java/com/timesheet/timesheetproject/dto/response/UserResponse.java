@@ -37,10 +37,17 @@ public class UserResponse extends BaseResponse{
 
     TypeUserResponse typeUser;
 
-    List<RoleResponse> roles;
-
     PositionResponse position;
 
     BranchResponse branch;
 
+    List<RoleResponse> roles;
+    List<PermissionResponse> permissions;
+
+    public UserResponse(String username, String password, List<RoleResponse> roles, List<PermissionResponse> permissions) {
+        this.username = username;
+        this.password = password;
+        this.roles = roles;
+        this.permissions = permissions;
+    }
 }

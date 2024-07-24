@@ -11,10 +11,10 @@ import com.timesheet.timesheetproject.dto.request.auth.LogoutRequest;
 import com.timesheet.timesheetproject.dto.request.auth.RefreshRequest;
 import com.timesheet.timesheetproject.dto.response.PermissionResponse;
 import com.timesheet.timesheetproject.dto.response.RoleResponse;
+import com.timesheet.timesheetproject.dto.response.UserProjection;
 import com.timesheet.timesheetproject.dto.response.auth.AuthenticationResponse;
 import com.timesheet.timesheetproject.dto.response.auth.IntrospectResponse;
 import com.timesheet.timesheetproject.entity.InvalidatedToken;
-import com.timesheet.timesheetproject.entity.User;
 import com.timesheet.timesheetproject.exception.AppException;
 import com.timesheet.timesheetproject.exception.ErrorCode;
 import com.timesheet.timesheetproject.repository.InvalidatedTokenRepository;
@@ -35,6 +35,7 @@ import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.List;
@@ -58,14 +59,14 @@ public class AuthenticationService implements IAuthenticationService {
     @NonFinal
 //    @Value("${valid-duration}")
 //    protected  long VALID_DURATION;
-    protected  long VALID_DURATION = 6000;
+    protected long VALID_DURATION = 6000;
     @NonFinal
 //    @Value("${refreshable-duration}")
-    protected  long REFRESHABLE_DURATION = 1000;
+    protected long REFRESHABLE_DURATION = 1000;
 
     @Override
     public AuthenticationResponse authencticate(AuthenticationResquest resquest) {
-        var user = userRepository.findByUsername(resquest.getUsername()).orElseThrow(() ->
+        var user = userRepository.findProjectionByUsername(resquest.getUsername()).orElseThrow(() ->
                 new AppException(ErrorCode.USER_NOT_EXISTED));
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
         boolean authenticated = passwordEncoder.matches(resquest.getPassword(), user.getPassword());
@@ -73,7 +74,7 @@ public class AuthenticationService implements IAuthenticationService {
         //role
         List<RoleResponse> roles = roleService.getRoleByUserId(user.getId());
         String listRole = "";
-        for(RoleResponse role : roles){
+        for (RoleResponse role : roles) {
             listRole += (role.getCode() + " ");
         }
         var token = generateToken(user);
@@ -89,8 +90,8 @@ public class AuthenticationService implements IAuthenticationService {
         var token = request.getToken();
         boolean isValid = true;
         try {
-            verifyToken(token,false);
-        }catch (AppException e){
+            verifyToken(token, false);
+        } catch (AppException e) {
             isValid = false;
         }
 
@@ -102,34 +103,42 @@ public class AuthenticationService implements IAuthenticationService {
     @Override
     public void logout(LogoutRequest request) throws ParseException, JOSEException {
         try {
-            var signToken = verifyToken(request.getToken(),true);
+            var signToken = verifyToken(request.getToken(), true);
 
             String jit = signToken.getJWTClaimsSet().getJWTID();
             Date expiryTime = signToken.getJWTClaimsSet().getExpirationTime();
+            LocalDate currentDate = LocalDate.now();
 
-            InvalidatedToken invalidatedToken =
-                    InvalidatedToken.builder().id(jit).expiryTime(expiryTime).build();
+            InvalidatedToken invalidatedToken = InvalidatedToken.builder()
+                    .id(jit)
+                    .expiryTime(expiryTime)
+                    .date(currentDate)
+                    .build();
 
             invalidatedTokenRepository.save(invalidatedToken);
-        } catch (AppException exception){
+        } catch (AppException exception) {
             log.info("Token already expired");
         }
     }
 
     @Override
-    public Object refreshToken(RefreshRequest refreshRequest) throws ParseException, JOSEException {
+    public AuthenticationResponse refreshToken(RefreshRequest refreshRequest) throws ParseException, JOSEException {
 
-        SignedJWT signedJWT = verifyToken(refreshRequest.getToken(),true);
+        SignedJWT signedJWT = verifyToken(refreshRequest.getToken(), true);
         var jti = signedJWT.getJWTClaimsSet().getJWTID();
         var expiryTime = signedJWT.getJWTClaimsSet().getExpirationTime();
 
-        InvalidatedToken invalidatedToken =
-                InvalidatedToken.builder().id(jti).expiryTime(expiryTime).build();
+        LocalDate currentDate = LocalDate.now();
+        InvalidatedToken invalidatedToken = InvalidatedToken.builder()
+                .id(jti)
+                .expiryTime(expiryTime)
+                .date(currentDate)
+                .build();
         invalidatedTokenRepository.save(invalidatedToken);
 
         String username = signedJWT.getJWTClaimsSet().getSubject();
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(()-> new AppException(ErrorCode.UNAUTHENTICATED));
+        var user = userRepository.findProjectionByUsername(username)
+                .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
 
         var token = generateToken(user);
         return AuthenticationResponse.builder()
@@ -145,13 +154,13 @@ public class AuthenticationService implements IAuthenticationService {
 
         Date expiryTime = (isRefresh)
                 ? new Date(signedJWT.getJWTClaimsSet().getIssueTime()
-                    .toInstant().plus(REFRESHABLE_DURATION,ChronoUnit.SECONDS)
-                    .toEpochMilli())
+                .toInstant().plus(REFRESHABLE_DURATION, ChronoUnit.SECONDS)
+                .toEpochMilli())
                 : signedJWT.getJWTClaimsSet().getExpirationTime();
 
         boolean verified = signedJWT.verify(verifier);
 
-        if(!verified) throw new AppException(ErrorCode.UNAUTHENTICATED);
+        if (!verified) throw new AppException(ErrorCode.UNAUTHENTICATED);
 
         if (expiryTime.before(new Date())) throw new AppException(ErrorCode.UNAUTHENTICATED);
 
@@ -161,7 +170,7 @@ public class AuthenticationService implements IAuthenticationService {
         return signedJWT;
     }
 
-    private String generateToken(User user) {
+    private String generateToken(UserProjection user) {
         JWSHeader header = new JWSHeader(JWSAlgorithm.HS512);
         JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder()
                 .subject(user.getUsername())
@@ -183,19 +192,20 @@ public class AuthenticationService implements IAuthenticationService {
             throw new RuntimeException(e);
         }
     }
-    private String converterRoleAndPermission(User user){
+
+    private String converterRoleAndPermission(UserProjection user) {
         StringBuilder result = new StringBuilder("");
         //role
         List<RoleResponse> roles = roleService.getRoleByUserId(user.getId());
-        for(RoleResponse role : roles){
+        for (RoleResponse role : roles) {
             result.append("ROLE_");
             result.append(role.getCode());
             result.append(" ");
         }
         //permission
-        for(RoleResponse role: roles){
+        for (RoleResponse role : roles) {
             List<PermissionResponse> permissions = permissionService.getPermissionByRoleId(role.getId());
-            for(PermissionResponse permisstion : permissions){
+            for (PermissionResponse permisstion : permissions) {
                 result.append(permisstion.getCode());
                 result.append(" ");
             }

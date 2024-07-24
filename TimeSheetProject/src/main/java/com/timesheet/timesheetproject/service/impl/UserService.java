@@ -3,6 +3,7 @@ package com.timesheet.timesheetproject.service.impl;
 import com.timesheet.timesheetproject.dto.request.user.UserCreationRequest;
 import com.timesheet.timesheetproject.dto.request.user.UserResetPasswordRequest;
 import com.timesheet.timesheetproject.dto.request.user.UserUpdateRequest;
+import com.timesheet.timesheetproject.dto.response.UserProjection;
 import com.timesheet.timesheetproject.dto.response.UserResponse;
 import com.timesheet.timesheetproject.entity.*;
 import com.timesheet.timesheetproject.exception.AppException;
@@ -11,6 +12,7 @@ import com.timesheet.timesheetproject.mapper.UserMapper;
 import com.timesheet.timesheetproject.repository.*;
 import com.timesheet.timesheetproject.service.IRoleService;
 import com.timesheet.timesheetproject.service.IUserService;
+import jakarta.annotation.PostConstruct;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +20,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.redis.core.HashOperations;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -30,7 +34,7 @@ import java.util.List;
 @Service
 @Slf4j
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class UserService implements IUserService {
+public class UserService implements IUserService{
 
     @Autowired
     UserMapper userMapper;
@@ -59,6 +63,18 @@ public class UserService implements IUserService {
     IRoleService roleService;
     @Autowired
     PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private BaseRedisService<String,String,String> redisServicel;
+
+
+    @PostConstruct
+    private void initRedis(){
+        List<UserProjection> users = userRepository.findUserProjectionAll();
+        for(UserProjection user : users){
+            redisServicel.hashSet("USER_" + user.getId(), user.getUsername(),user.getPassword());
+        }
+    }
     @Override
     public UserResponse createUser(UserCreationRequest request) {
         if (userRepository.existsByUsername(request.getUsername()))
