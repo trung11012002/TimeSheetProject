@@ -1,6 +1,7 @@
 package com.timesheet.timesheetproject.repository;
 
 import com.timesheet.timesheetproject.dto.response.UserProjection;
+import com.timesheet.timesheetproject.dto.response.UserResponse;
 import com.timesheet.timesheetproject.entity.Role;
 import com.timesheet.timesheetproject.entity.User;
 import org.springframework.data.domain.Page;
@@ -12,11 +13,19 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 import java.util.Optional;
 
-public interface UserRepository extends JpaRepository<User,Long> {
+public interface UserRepository extends JpaRepository<User, Long> {
     boolean existsByUsername(String username);
+
     Optional<User> findByUsername(String username);
+
     @Query("SELECT u FROM User u WHERE u.username = :username")
     Optional<UserProjection> findProjectionByUsername(@Param("username") String username);
+
+    @Query("SELECT new com.timesheet.timesheetproject.dto.response.UserResponse(u.username,u.password) FROM User u WHERE u.username = :username")
+    Optional<UserResponse> findConstructorByUsername(@Param("username") String username);
+
+    @Query("SELECT new com.timesheet.timesheetproject.dto.response.UserResponse(u.username,u.password) FROM User u")
+    List<UserResponse> findConstructorAll();
 
     @Query("SELECT u FROM User u")
     List<UserProjection> findUserProjectionAll();

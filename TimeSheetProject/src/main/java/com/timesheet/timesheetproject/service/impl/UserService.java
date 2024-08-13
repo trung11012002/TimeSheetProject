@@ -3,7 +3,6 @@ package com.timesheet.timesheetproject.service.impl;
 import com.timesheet.timesheetproject.dto.request.user.UserCreationRequest;
 import com.timesheet.timesheetproject.dto.request.user.UserResetPasswordRequest;
 import com.timesheet.timesheetproject.dto.request.user.UserUpdateRequest;
-import com.timesheet.timesheetproject.dto.response.UserProjection;
 import com.timesheet.timesheetproject.dto.response.UserResponse;
 import com.timesheet.timesheetproject.entity.*;
 import com.timesheet.timesheetproject.exception.AppException;
@@ -17,11 +16,10 @@ import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.redis.core.HashOperations;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -34,7 +32,7 @@ import java.util.List;
 @Service
 @Slf4j
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class UserService implements IUserService{
+public class UserService implements IUserService {
 
     @Autowired
     UserMapper userMapper;
@@ -59,52 +57,56 @@ public class UserService implements IUserService{
 
     @Autowired
     UserRoleRepository userRoleRepostitory;
+
     @Autowired
     IRoleService roleService;
+
     @Autowired
     PasswordEncoder passwordEncoder;
 
     @Autowired
-    private BaseRedisService<String,String,String> redisServicel;
-
+    private BaseRedisService<String, String, UserResponse> redisService;
 
     @PostConstruct
-    private void initRedis(){
-        List<UserProjection> users = userRepository.findUserProjectionAll();
-        for(UserProjection user : users){
-            redisServicel.hashSet("USER_" + user.getId(), user.getUsername(),user.getPassword());
+    public void initRedis() {
+        List<UserResponse> users = userRepository.findConstructorAll();
+        for (UserResponse user : users) {
+            String userKey = "USER_" + user.getId();
+            redisService.set("test1", user);
         }
     }
+
     @Override
     public UserResponse createUser(UserCreationRequest request) {
-        if (userRepository.existsByUsername(request.getUsername()))
+        if (userRepository.existsByUsername(request.getUsername())) {
             throw new AppException(ErrorCode.USER_EXISTED);
+        }
 
         User user = userMapper.toUser(request);
-        if(request.getLevelId() != null){
+        if (request.getLevelId() != null) {
             Level level = levelRepostitory.findById(request.getLevelId()).orElse(null);
             user.setLevel(level);
         }
-        if(request.getTypeUserId() != null){
+        if (request.getTypeUserId() != null) {
             TypeUser typeUser = typeUserRepostitory.findById(request.getTypeUserId()).orElse(null);
             user.setTypeUser(typeUser);
         }
-        if(request.getPositionId() != null){
+        if (request.getPositionId() != null) {
             Position position = positionRepostitory.findById(request.getPositionId()).orElse(null);
             user.setPosition(position);
         }
-        if(request.getBranchId() != null){
+        if (request.getBranchId() != null) {
             Branch branch = branchRepostitory.findById(request.getBranchId()).orElse(null);
             user.setBranch(branch);
         }
         user.setAllowLeaveDay(0);
-        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
-        //roleuser
+
         Role role = roleRepostitory.findByCode("BASICUSER").orElse(null);
         user = userRepository.save(user);
-        UserRole userRole = new UserRole(user,role);
+        UserRole userRole = new UserRole(user, role);
         userRoleRepostitory.save(userRole);
+
         return userMapper.toUserResponse(userRepository.save(user));
     }
 
@@ -121,37 +123,37 @@ public class UserService implements IUserService{
 
     @Override
     public UserResponse getUserById(Long id) {
-
         return userMapper.toUserResponse(userRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED)));
-
     }
 
     @Override
     public UserResponse updateUser(UserUpdateRequest request) {
-        User user = userRepository.findById(request.getId()).orElseThrow(() ->new AppException(ErrorCode.USER_NOT_EXISTED));
+        User user = userRepository.findById(request.getId())
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
         userMapper.updateUser(user, request);
 
-        if(request.getLevelId() != null){
+        if (request.getLevelId() != null) {
             Level level = levelRepostitory.findById(request.getLevelId()).orElse(null);
             user.setLevel(level);
         }
-        if(request.getTypeUserId() != null){
+        if (request.getTypeUserId() != null) {
             TypeUser typeUser = typeUserRepostitory.findById(request.getTypeUserId()).orElse(null);
             user.setTypeUser(typeUser);
         }
-        if(request.getPositionId() != null){
+        if (request.getPositionId() != null) {
             Position position = positionRepostitory.findById(request.getPositionId()).orElse(null);
             user.setPosition(position);
         }
-        if(request.getBranchId() != null){
+        if (request.getBranchId() != null) {
             Branch branch = branchRepostitory.findById(request.getBranchId()).orElse(null);
             user.setBranch(branch);
         }
-        if(request.getBeginLevelId() != null){
+        if (request.getBeginLevelId() != null) {
             Level beginLevel = levelRepostitory.findById(request.getLevelId()).orElse(null);
             user.setBeginLevel(beginLevel);
         }
+
         return userMapper.toUserResponse(userRepository.save(user));
     }
 
@@ -164,13 +166,15 @@ public class UserService implements IUserService{
     public UserResponse getMyInfo() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
         return userMapper.toUserResponse(user);
     }
 
     @Override
     public UserResponse resetPassword(UserResetPasswordRequest request) {
-        User user = userRepository.findById(request.getId()).orElseThrow(() ->new AppException(ErrorCode.USER_NOT_EXISTED));
+        User user = userRepository.findById(request.getId())
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         return userMapper.toUserResponse(userRepository.save(user));
     }
@@ -181,15 +185,15 @@ public class UserService implements IUserService{
     }
 
     @Override
-    public Page<UserResponse> searchUsers(String username,Long positionId, Boolean active, Long userTypeId, Long branchId, Long levelId,Integer pageNo) {
-        Pageable pageable = PageRequest.of(pageNo-1,4);
-        Page<User> usersPage = userRepository.searchUsers(username,positionId,active,userTypeId,branchId,levelId,pageable);
+    public Page<UserResponse> searchUsers(String username, Long positionId, Boolean active, Long userTypeId, Long branchId, Long levelId, Integer pageNo) {
+        Pageable pageable = PageRequest.of(pageNo - 1, 4);
+        Page<User> usersPage = userRepository.searchUsers(username, positionId, active, userTypeId, branchId, levelId, pageable);
         return usersPage.map(userMapper::toUserResponse);
     }
 
     @Override
     public Page<UserResponse> getPage(Integer pageNo) {
-        Pageable pageable = PageRequest.of(pageNo-1,2);
+        Pageable pageable = PageRequest.of(pageNo - 1, 2);
         Page<User> usersPage = userRepository.findAll(pageable);
         return usersPage.map(userMapper::toUserResponse);
     }

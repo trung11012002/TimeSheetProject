@@ -39,10 +39,10 @@ public class BaseRedisService<K, F, V> implements IBaseRedisService<K, F, V> {
 //        return hashOperations.hasKey(key,field);
 //    }
 //
-//    @Override
-//    public Object get(String key) {
-//        return redisTemplate.opsForValue().get(key);
-//    }
+    @Override
+    public Object get(K key) {
+        return redisTemplate.opsForValue().get(key);
+    }
 //
 //    @Override
 //    public Map<String, Object> getField(String key) {

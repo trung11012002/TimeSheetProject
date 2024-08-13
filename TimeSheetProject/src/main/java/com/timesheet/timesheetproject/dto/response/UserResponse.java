@@ -1,5 +1,6 @@
 package com.timesheet.timesheetproject.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.timesheet.timesheetproject.entity.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -8,6 +9,7 @@ import lombok.experimental.SuperBuilder;
 import java.time.LocalDate;
 import java.util.List;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -49,5 +51,17 @@ public class UserResponse extends BaseResponse{
         this.password = password;
         this.roles = roles;
         this.permissions = permissions;
+    }
+
+    public UserResponse(String username, String password) {
+        this.username = username;
+        this.password = password;
+    }
+
+    public UserResponse(String username, String password, int allowLeaveDay, double salary) {
+        this.username = username;
+        this.password = password;
+        this.allowLeaveDay = allowLeaveDay;
+        this.salary = salary;
     }
 }
